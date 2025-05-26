@@ -7,8 +7,10 @@ phase= 'train' # 'inference'
 waveforms, targets= next(iter(train_loader))
 print(waveforms.shape, targets.shape, '\n')
 
-model= CustomModel(fs= 22050)
-print(model(waveforms).shape)
+model= CustomModel(fs= 22050, d_model= 640, n_head= 4, 
+                   num_encoders= 4, num_decoders= 1,
+                   dim_feedforward= 640* 2, planes= 32)
+print(model(waveforms, targets).shape)
 
 
 # print("train batch size:",train_loader.batch_size,
