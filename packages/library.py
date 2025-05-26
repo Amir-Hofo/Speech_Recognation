@@ -13,3 +13,5 @@ from torch.nn.utils.rnn import pad_sequence
 import torchaudio
 from torchaudio import transforms as T
 from torchtext.vocab import build_vocab_from_iterator
+
+from torchvision import models

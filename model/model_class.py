@@ -2,7 +2,7 @@ from preprocess import *
 
 class CustomModel(nn.Module):
     def __init__(self, fs, n_mels= 80, n_fft= 400, 
-                 inplanes= 32, planes= 64):
+                 feature_extractor_model= 'Resnet' , inplanes= 32, planes= 64):
         super().__init__()
         # transform
         self.transforms= nn.Sequential(T.Resample(orig_freq= fs, new_freq= 16000),
@@ -10,7 +10,10 @@ class CustomModel(nn.Module):
                                        ).requires_grad_(False)
         
         # feature embedding
-        self.cnn= CNN2DFeatureExtractor(inplanes= inplanes, planes= planes)
+        if feature_extractor_model == 'CNN2D':
+            self.cnn= CNN2DFeatureExtractor(inplanes= inplanes, planes= planes)
+        elif feature_extractor_model == 'Resnet':
+            self.cnn= ResnetFeatureExtractor()
         
     def forward(self, src):
         with torch.no_grad():
@@ -42,3 +45,13 @@ class CNN2DFeatureExtractor(nn.Module):
         x= self.relu(self.bn2(self.conv2(x)))
         x= self.maxpool2(self.relu(self.bn3(self.conv3(x))))
         return x
+
+class ResnetFeatureExtractor(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.model= models.resnet18(weights= models.ResNet18_Weights.IMAGENET1K_V1)
+        module_list= list(self.model.children())
+        self.model= nn.Sequential(*module_list[:-5])
+
+    def forward(self, src):
+        return self.model(src.repeat(1, 3, 1, 1))
