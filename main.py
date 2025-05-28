@@ -1,5 +1,5 @@
 from model import *
-
+warnings.filterwarnings("ignore")
 
 # config
 phase= 'train' # 'inference'
@@ -7,9 +7,9 @@ phase= 'train' # 'inference'
 waveforms, targets= next(iter(train_loader))
 print(waveforms.shape, targets.shape, '\n')
 
-model= CustomModel(fs= 22050, d_model= 640, n_head= 4, 
+model= CustomModel(fs= 22050, d_model= 1280, n_head= 4, 
                    num_encoders= 4, num_decoders= 1,
-                   dim_feedforward= 640* 2, planes= 32)
+                   dim_feedforward= 640* 2, planes= 64)
 print(model(waveforms, targets).shape)
 
 

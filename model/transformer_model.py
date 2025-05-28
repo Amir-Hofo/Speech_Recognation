@@ -32,19 +32,34 @@ class TransformerModel(nn.Module):
                                      embedding_dim= self.d_model, 
                                      padding_idx= 0)
         self.embedding.weight.data.uniform_(-0.1, 0.1)
+        ''' 
+        in:  tgt= [batch_size, text_length]
+        out: tgt= [batch_size, text_length, d_model]
+        '''
 
         self.pos_encoder= PositionalEncoding(d_model= d_model)
+        ''' 
+        in:  tgt= [batch_size, text_length, d_model]
+        out: tgt= [text_length, batch_size, d_model]
+        '''
 
         self.transformer= nn.Transformer(d_model= d_model, nhead= n_head,
                                          num_encoder_layers= num_encoders,
                                          num_decoder_layers= num_decoders,
                                          dim_feedforward= dim_feedforward,
                                          dropout= dropout, activation= activation)
+        '''
+        Resnet:
+        in: src= [16*n_mels, batch_size, mel_time_length/ 4]
+            tgt= [text_length, batch_size, d_model]
+        out: []
+        '''
         
 
     def forward(self, src, tgt):
         tgt= self.embedding(tgt) * math.sqrt(self.d_model)
         tgt= self.pos_encoder(tgt.permute(1, 0, 2))
         tgt_mask= nn.Transformer.generate_square_subsequent_mask(len(tgt))
-        out= self.transformer(src, tgt, tgt_mask= tgt_mask)
-        return out
+        
+        # out= self.transformer(src, tgt, tgt_mask= tgt_mask)
+        return src
