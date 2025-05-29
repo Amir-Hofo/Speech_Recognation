@@ -1,5 +1,8 @@
 from packages import *
 
+# warning
+warnings.filterwarnings("ignore")
+
 # device
 device= 'cuda' if torch.cuda.is_available() else 'cpu'
 pin_memory= (device == 'cuda')

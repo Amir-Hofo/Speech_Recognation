@@ -2,7 +2,7 @@ from .transformer_model import *
 
 class CustomModel(nn.Module):
     def __init__(self, fs, d_model, n_head, num_encoders, num_decoders,
-                 dim_feedforward, dropout=0.1, activation= F.relu, 
+                 dim_feedforward, dropout= 0.1, activation= F.relu, 
                  n_mels= 80, n_fft= 400, feature_extractor_model= 'Resnet', 
                  inplanes= 32, planes= 64):
         super().__init__()
@@ -79,5 +79,7 @@ class CustomModel(nn.Module):
         src= src.permute(2, 0, 1)
 
         out= self.transformers(src, tgt)
+        src= src.permute(1, 0, 2)
         out= self.cls(out)
         return out
+    
